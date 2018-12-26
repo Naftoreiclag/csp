@@ -1,4 +1,7 @@
 fn main() {
-    println!("S Bus");
-}
+    let aaaaa = 5;
+    let y = aaaaa;
 
+    let z = None;
+    println!("Hello world!");
+}
