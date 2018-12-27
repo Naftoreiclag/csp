@@ -100,8 +100,16 @@ pub struct Blame {
     end_byte: usize,
 }
 impl Blame {
+    // TODO
+    fn new() -> Self {
+        return Blame {
+            start_byte: 0,
+            end_byte: 0,
+        };
+    }
+
     /// Constructor
-    fn new(start_byte: usize, end_byte: usize) -> Self {
+    fn new_range(start_byte: usize, end_byte: usize) -> Self {
         if start_byte > end_byte {
             panic!("Invalid symexpr Blame range!");
         }
