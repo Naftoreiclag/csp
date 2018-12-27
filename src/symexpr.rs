@@ -116,8 +116,16 @@ impl Blame {
     /// list.
     pub fn superset(first: Blame, second: Blame) -> Self {
         Blame {
-            start_byte: if first.start_byte < second.start_byte {first.start_byte} else {second.start_byte},
-            end_byte: if first.end_byte > second.end_byte {first.end_byte} else {second.end_byte},
+            start_byte: if first.start_byte < second.start_byte {
+                first.start_byte
+            } else {
+                second.start_byte
+            },
+            end_byte: if first.end_byte > second.end_byte {
+                first.end_byte
+            } else {
+                second.end_byte
+            },
         }
     }
 }
@@ -165,9 +173,7 @@ where
 
 /// Extracts the next string, assumes that the beginning quote was already
 /// removed. TODO: Handles usual string escapes the same as Rust does.
-fn extract_string_literal<I>(
-    chars: &mut Peekable<I>,
-) -> Option<Result<Token, ParseError>>
+fn extract_string_literal<I>(chars: &mut Peekable<I>) -> Option<Result<Token, ParseError>>
 where
     I: Iterator<Item = char>,
 {
@@ -217,9 +223,7 @@ where
 
 /// Extracts the next token from the provided char iterator.
 /// This does not include comments.
-pub fn next_token<I>(
-    chars: &mut Peekable<I>,
-) -> Option<Result<Token, ParseError>>
+pub fn next_token<I>(chars: &mut Peekable<I>) -> Option<Result<Token, ParseError>>
 where
     I: Iterator<Item = char>,
 {
@@ -316,12 +320,7 @@ where
     let mut retval = List::new();
     loop {
         let next_elem = match input.next() {
-            None => {
-                return Err(ParseError::new(
-                    Blame::new(),
-                    ParseErrorKind::UnclosedList,
-                ))
-            }
+            None => return Err(ParseError::new(Blame::new(), ParseErrorKind::UnclosedList)),
             Some(token) => {
                 let token = token?;
                 match token {
@@ -372,9 +371,7 @@ where
                     Blame::new(),
                     ParseErrorKind::FirstTokenEndsList,
                 )),
-                Token::StrLiteral(string_literal) => {
-                    parse_string_lit(string_literal)
-                }
+                Token::StrLiteral(string_literal) => parse_string_lit(string_literal),
                 Token::Misc(misc_string) => parse_misc(misc_string),
             },
             Err(error) => Err(error),
@@ -428,8 +425,8 @@ impl FromStr for Symexpr {
 mod test {
 
     use super::{
-        consume_whitespace_and_comments, parse_chars, tokenize, Atom, List,
-        ParseErrorKind, Symbol, Symexpr, Token,
+        consume_whitespace_and_comments, parse_chars, tokenize, Atom, List, ParseErrorKind, Symbol,
+        Symexpr, Token,
     };
 
     #[test]
@@ -437,9 +434,7 @@ mod test {
         let input = "\"string literal.\"";
         let syme = parse_chars(input.chars()).unwrap();
         match syme {
-            Symexpr::Atom(Atom::Str(val)) => {
-                assert_eq!(val, String::from("string literal."))
-            }
+            Symexpr::Atom(Atom::Str(val)) => assert_eq!(val, String::from("string literal.")),
             different => panic!("Got something else: {:?}", different),
         }
 
@@ -493,13 +488,13 @@ mod test {
             Symexpr::List(List::from(vec![
                 Symexpr::Atom(Atom::Symbol(Symbol::from("symbol"))),
                 Symexpr::List(List::from(vec![
-                    Symexpr::List(List::from(vec![Symexpr::Atom(
-                        Atom::Symbol(Symbol::from("nest")),
-                    )])),
+                    Symexpr::List(List::from(vec![Symexpr::Atom(Atom::Symbol(Symbol::from(
+                        "nest",
+                    )))])),
                     Symexpr::Atom(Atom::Symbol(Symbol::from("nested"))),
-                    Symexpr::List(List::from(vec![Symexpr::Atom(
-                        Atom::Symbol(Symbol::from("nesting")),
-                    )])),
+                    Symexpr::List(List::from(vec![Symexpr::Atom(Atom::Symbol(Symbol::from(
+                        "nesting",
+                    )))])),
                 ])),
             ]))
         );
