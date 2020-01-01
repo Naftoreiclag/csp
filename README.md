@@ -1,2 +1,2 @@
 # csp
-rust
+Rust
